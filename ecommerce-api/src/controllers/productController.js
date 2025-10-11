@@ -60,13 +60,13 @@ async function getProductByCategory(req, res, next) {
 
 async function createProduct(req, res, next) {
   try {
-    const { name, description, price, stock, imagesUrl, category } = req.body;
+    const { name, description, price, stock, imagesUrl, category, offer } = req.body;
 
-    if (!name || !description || !price || !stock || !imagesUrl || !category) {
+    if (!name || !description || !price || !stock || !imagesUrl || !category || !offer) {
       return res.status(400).json({ error: 'All fields are required' });
     }
 
-    const newProduct = await Product.create({ name, description, price, stock, imagesUrl, category });
+    const newProduct = await Product.create({ name, description, price, stock, imagesUrl, category, offer });
     res.status(201).json(newProduct);
   } catch (error) {
     next(error);
