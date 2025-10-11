@@ -1,5 +1,4 @@
 import Cart from '../models/cart.js';
-import errorHandler from '../middlewares/errorHandler.js';
 
 async function getCarts(req, res) {
   try {

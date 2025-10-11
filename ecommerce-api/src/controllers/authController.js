@@ -22,18 +22,17 @@ const checkUserExist = async (email) => {
 
 async function register(req, res) {
   try {
-    const { displayName, email, password, phone } = req.body;
+    const { displayName, email, password, phone, role } = req.body;
     const userExist = await checkUserExist(email);
     if (userExist) {
       return res.status(400).json({ message: 'User already exist' });
     }
-    let role = 'guest';
     const hashPassword = await generatePassword(password);
     const newUser = new User({
       displayName,
       email,
       hashPassword,
-      role,
+       role: role || 'guest',
       phone
     });
     await newUser.save();
