@@ -4,10 +4,11 @@ import { ProductsService } from '../../../core/services/products/products.servic
 import { MatPaginatorModule, PageEvent} from '@angular/material/paginator'
 import { PlaceholderComponent } from '../../shared/placeholder/placeholder.component';
 import { ProductCardComponent } from '../product-card/product-card.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-product-list',
-  imports: [MatPaginatorModule, PlaceholderComponent, ProductCardComponent],
+  imports: [MatPaginatorModule, PlaceholderComponent, ProductCardComponent, CommonModule],
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.css',
 })
@@ -33,7 +34,7 @@ export class ProductListComponent {
 
   onPageChange(event: PageEvent){
     console.log(event);
-    this.getProducts(event.pageIndex, event.pageSize);
+    this.getProducts(event.pageIndex + 1, event.pageSize);
   }
 
   get skeletonArray(): number[] {

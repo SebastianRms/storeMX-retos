@@ -1,10 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-menu-item',
-  imports: [RouterLink, CommonModule],
+  imports: [ CommonModule],
   templateUrl: './menu-item.component.html',
   styleUrl: './menu-item.component.css'
 })

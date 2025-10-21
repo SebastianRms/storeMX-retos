@@ -1,6 +1,9 @@
 <div class="relative">
   <div class="bg-white shadow-lg border-b sticky top-0 z-50 p-4">
     <div class="max-w-6xl mx-auto">
+      <div class="p-4 overflow-y-auto flex">
+        <app-nav-bar [navRoutes]="routes"></app-nav-bar>
+      </div>
       <form [formGroup]="searchProductForm" class="flex gap-2 items-center">
         <div class="flex-1 relative">
           <input

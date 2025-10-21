@@ -1,4 +1,5 @@
 import express from 'express';
+
 import {
   getCarts,
   getCartById,
@@ -7,31 +8,23 @@ import {
   updateCart,
   deleteCart,
   addProductToCart,
+  removeProductFromCart
 } from '../controllers/cartController.js';
 import authMiddleware from '../middlewares/authMiddleware.js';
 import isAdmin from '../middlewares/isAdminMiddleware.js';
 
 const router = express.Router();
 
-// Obtener todos los carritos (admin)
-router.get('/cart', authMiddleware, isAdmin, getCarts);
 
-// Obtener carrito por ID
-router.get('/cart/:id', authMiddleware, isAdmin, getCartById);
+router.get('/', authMiddleware, isAdmin, getCarts);
+router.get('/:id', authMiddleware, isAdmin, getCartById);
+router.get('/user/:id', authMiddleware, getCartByUser);
+router.post('/', authMiddleware, createCart);
+router.post('/add-product', authMiddleware, addProductToCart);
+router.put('/:id', authMiddleware, updateCart);
+router.delete('/:id', authMiddleware, deleteCart);
+router.delete('/product/:productId', authMiddleware, removeProductFromCart);
 
-// Obtener carrito por usuario
-router.get('/cart/user/:id', authMiddleware, getCartByUser);
-
-// Crear nuevo carrito
-router.post('/cart', authMiddleware, createCart);
-
-// Agregar producto al carrito (función especial)
-router.post('/cart/add-product', authMiddleware, addProductToCart);
-
-// Actualizar carrito completo
-router.put('/cart/:id', authMiddleware, updateCart);
-
-// Eliminar carrito
-router.delete('/cart/:id', authMiddleware, deleteCart);
 
 export default router;
+

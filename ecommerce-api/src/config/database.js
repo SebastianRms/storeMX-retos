@@ -16,4 +16,4 @@ const dbConection = async ()=> { // Declara una función asíncrona para conecta
     }
 };
 
-export default dbConection // Exporta la función para usarla en otros
+export default dbConection // Exporta la función para usarla en otros   

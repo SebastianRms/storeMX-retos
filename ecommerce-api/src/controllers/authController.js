@@ -20,7 +20,7 @@ const checkUserExist = async (email) => {
   return user;
 }
 
-async function register(req, res) {
+async function register(req, res, next) {
   try {
     const { displayName, email, password, phone, role } = req.body;
     const userExist = await checkUserExist(email);
@@ -60,5 +60,16 @@ async function login(req, res, next) {
   }
 }
 
-export { register, login };
+async function checkEmail(req, res, next) {
+  try {
+    const email = req.query.email;
+    const userExist = await checkUserExist(email);
+    // !!userExist convierte el objeto (o null) en un booleano (true/false)
+    res.status(200).json({ exists: !!userExist });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export { register, login, checkEmail };
 

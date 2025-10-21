@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { AuthService, decodedToken } from '../../../../core/services/auth/auth.service';
 import { CommonModule } from '@angular/common';
 import { routeItem } from '../../../side-bar/menu-item/menu-item/menu-item.component';
@@ -12,6 +12,7 @@ import { SideMenuComponent } from '../../../side-bar/side-menu/side-menu/side-me
 })
 export class AsideComponent {
   sideBarOpen: boolean = false;
+  private authService = inject(AuthService);
 
   routes: routeItem[] = [
     { title: 'Inicio', route: '', textColor:'text-green-200'},
@@ -26,23 +27,12 @@ export class AsideComponent {
     { title: 'Compras', route: '/admin/purchases' },
   ]
 
-  authRoutes:routeItem[]=[
-    { title: 'mi perfil', route: '/user' },
-    { title: 'mi carrito', route:'/user/cart'}
-  ]
 
-  notAuthRoutes: routeItem[]=[
-    { title: 'iniciar sesion', route: '/login' },
-    { title: 'registro', route:'/register'}
-  ]
-  user: decodedToken | null = null;
-
-  constructor(private authService: AuthService){
+  constructor(){
     
   }
 
-  ngOnInit(): void {
-    this.user = this.authService.decodedToken;
-    console.log(this.user)
+  get isAdmin(): boolean {
+    return this.authService.decodedToken?.role === 'admin';
   }
 }
