@@ -17,13 +17,13 @@ export class AsideComponent {
   routes: routeItem[] = [
     { title: 'Inicio', route: '', textColor:'text-green-200'},
     { title: 'Productos', route: '/products' },
-    { title: 'Categorias', route:'/categories'}
+    { title: 'Carrito', route:'/user/cart'}
   ];
   
   adminRoutes: routeItem[]=[
     { title: 'Productos', route: '/admin/products' },
     { title: 'Usuarios', route: '/admin/users' },
-    { title: 'Categorias', route: '/admin/categories' },
+    { title: 'Carrito', route: '/user/cart' },
     { title: 'Compras', route: '/admin/purchases' },
   ]
 

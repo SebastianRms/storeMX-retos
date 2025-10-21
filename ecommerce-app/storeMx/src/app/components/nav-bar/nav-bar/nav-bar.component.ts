@@ -13,7 +13,11 @@ import { Observable } from 'rxjs';
 })
 export class NavBarComponent {
   @Input() title?: string;
-  @Input() navRoutes: routeItem[] = [];
+  @Input() navRoutes: routeItem[] = [
+    { title: 'Inicio', route: '' },
+      { title: 'Productos', route: '/products' },
+      { title: 'Mi Carrito', route: '/user/cart' }
+  ];
   private authService = inject(AuthService);
   isLoggedIn$: Observable<boolean>;
 

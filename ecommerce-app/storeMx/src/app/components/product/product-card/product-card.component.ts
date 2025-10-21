@@ -3,10 +3,12 @@ import { Product } from '../../../core/types/Products';
 import { CartService } from '../../../core/services/cart/cart.service';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { OfferDirective } from '../../../core/directives/offer/offer.directive';
+import { AdminDirective } from '../../../core/directives/admin/admin.directive';
 
 @Component({
   selector: 'app-product-card',
-  imports: [RouterLink, CommonModule],
+  imports: [RouterLink, CommonModule, OfferDirective, AdminDirective],
   templateUrl: './product-card.component.html',
   styleUrl: './product-card.component.css'
 })
@@ -23,4 +25,6 @@ export class ProductCardComponent {
       error:()=> this.loading = false,
     });
   }
+
+  
 }

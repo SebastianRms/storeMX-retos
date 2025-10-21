@@ -48,4 +48,20 @@ export class ProductsService {
     )
 
   }
+
+  getCheapestProducts(limit: number = 10): Observable<Product[]> {
+    const endpoint = `${this.baseUrl}/search`;
+    const params = new HttpParams()
+        .set('sortBy', 'price_asc') 
+        .set('limit', limit.toString());
+    return this.httpClient.get<ProductResponse>(endpoint, { params }).pipe(
+      map(response => {
+        return response.products; 
+      }),
+      catchError((error) => {
+        console.error('Error al cargar productos más baratos:', error);
+        return throwError(() => new Error('Fallo la carga de ofertas.'));
+      })
+    );
+  }
 }

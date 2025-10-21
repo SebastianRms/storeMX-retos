@@ -2,10 +2,11 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AsideComponent } from './components/layout/aside/aside/aside.component';
 import { NavComponent } from './components/layout/nav/nav/nav.component';
+import { ToastComponent } from './components/shared/toast/toast/toast.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, AsideComponent, NavComponent],
+  imports: [RouterOutlet, AsideComponent, NavComponent,ToastComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
