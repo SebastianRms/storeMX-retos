@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Product, ProductResponse } from '../../types/Products';
 import { catchError, map, Observable, throwError } from 'rxjs';
+import { environment } from '../../../../environments/environment.development';
 
 export type filters = {
   q: string;
@@ -14,7 +15,7 @@ export type filters = {
 })
 
 export class ProductsService {
-  private baseUrl = 'http://localhost:3000/api/products';
+  private baseUrl = `${environment.BACK_URL}/products`;//esto es lo que se cambio para usar las variables de entorno 
 
   constructor(private httpClient:HttpClient) { }
 
@@ -49,19 +50,30 @@ export class ProductsService {
 
   }
 
-  getCheapestProducts(limit: number = 10): Observable<Product[]> {
-    const endpoint = `${this.baseUrl}/search`;
-    const params = new HttpParams()
-        .set('sortBy', 'price_asc') 
-        .set('limit', limit.toString());
-    return this.httpClient.get<ProductResponse>(endpoint, { params }).pipe(
-      map(response => {
-        return response.products; 
-      }),
-      catchError((error) => {
-        console.error('Error al cargar productos más baratos:', error);
-        return throwError(() => new Error('Fallo la carga de ofertas.'));
-      })
-    );
+   getCheapestProducts(limit: number = 10): Observable<Product[]> {
+      // Define la URL completa para el endpoint de búsqueda
+      const endpoint = `${this.baseUrl}/search`;
+  
+      // Crea los parámetros de consulta HTTP:
+      // - sortBy=price_asc: ordena por precio ascendente
+      // - limit: número máximo de productos a retornar
+      const params = new HttpParams()
+          .set('sortBy', 'price_asc') 
+          .set('limit', limit.toString());
+  
+      // Realiza la petición GET HTTP con los parámetros configurados
+      return this.httpClient.get<ProductResponse>(endpoint, { params }).pipe(
+        // Transforma la respuesta para extraer solo el array de productos
+        map(response => {
+          return response.products; 
+        }),
+        // Maneja cualquier error que ocurra durante la petición
+        catchError((error) => {
+          // Registra el error en la consola
+          console.error('Error al cargar productos más baratos:', error);
+          // Retorna un nuevo error con mensaje personalizado
+          return throwError(() => new Error('Fallo la carga de ofertas.'));
+        })
+      );
   }
 }

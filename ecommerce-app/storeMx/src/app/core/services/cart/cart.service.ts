@@ -12,12 +12,13 @@ import {
 import { Cart } from '../../types/Cart';
 import { AuthService } from '../auth/auth.service';
 import { ToastService } from '../toast/toast.service';
+import { environment } from '../../../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CartService {
-  private baseUrl = 'http://localhost:3000/api/cart';
+  private baseUrl = `${environment.BACK_URL}/cart`;//esto es lo que se cambio para usar el environment.ts
 
   private cartSubject = new BehaviorSubject<Cart | null>(null);
   cart$ = this.cartSubject.asObservable();

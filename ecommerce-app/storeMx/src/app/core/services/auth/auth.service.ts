@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import { Router } from '@angular/router';
+import { environment } from '../../../../environments/environment.development';
 
 export type decodedToken = {
   userId: string;
@@ -14,8 +15,7 @@ export type decodedToken = {
   providedIn: 'root'
 })
 export class AuthService {
-
-  baseUrl = 'http://localhost:3000/api';
+  private baseUrl = `${environment.BACK_URL}/auth`;//esto es lo que se cambio para usar el environment.ts
   private loggedIn = new BehaviorSubject<boolean>(!!this.token);
   isLoggedIn$ = this.loggedIn.asObservable();
   

@@ -1,7 +1,7 @@
 import express from "express";
 import { body } from "express-validator";
 import validate from "../middlewares/validation.js";
-import { register, login } from "../controllers/authController.js";
+import { register, login, checkEmail} from "../controllers/authController.js";
 
 const router = express.Router();
 
@@ -65,6 +65,20 @@ router.post(
   ],
   validate,
   login
+);
+
+router.post(
+  "/check-email",
+  [
+    body("email")
+      .notEmpty()
+      .withMessage("email is required")
+      .isEmail()
+      .withMessage("Valid email is required")
+      .normalizeEmail(),
+  ],
+  validate,
+  checkEmail // <--- Conecta al controlador
 );
 
 export default router;
