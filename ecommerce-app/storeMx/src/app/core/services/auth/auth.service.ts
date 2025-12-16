@@ -31,11 +31,11 @@ export class AuthService {
   }
 
   register(data: any): Observable<any> {
-    return this.httpClient.post(`${this.baseUrl}/auth/register`, data);
+    return this.httpClient.post(`${this.baseUrl}/register`, data);
   }
   
   login(data: any): Observable<any> {
-    return this.httpClient.post(`${this.baseUrl}/auth/login`, data).pipe(
+    return this.httpClient.post(`${this.baseUrl}/login`, data).pipe(
       tap((response: any) => {
         if (response && response.token) {
           localStorage.setItem('token', response.token);
@@ -46,7 +46,7 @@ export class AuthService {
   }
 
   checkEmailExist(email:string): Observable<boolean>{
-    return this.httpClient.get<{exists:boolean}>(`${this.baseUrl}/auth/check-email`, {params:{email}}).pipe(
+    return this.httpClient.get<{exists:boolean}>(`${this.baseUrl}/check-email`, {params:{email}}).pipe(
       map((res)=> res.exists)
     );
   }

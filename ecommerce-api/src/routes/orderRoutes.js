@@ -18,10 +18,10 @@ const router = express.Router();
 // Obtener todas las órdenes (admin)
 router.get('/orders', authMiddleware, isAdmin, getOrders);
 
-// Obtener órdenes por usuario
-router.get('/orders/user/:userId', authMiddleware, getOrdersByUser);
+router.get('/orders/user', authMiddleware, getOrdersByUser);
 
-// Obtener orden por ID
+// Obtener orden por ID (Ruta dinámica)
+// Esta línea capturaría "user" si no hubiéramos arreglado la línea de arriba.
 router.get('/orders/:id', authMiddleware, getOrderById);
 
 // Crear nueva orden

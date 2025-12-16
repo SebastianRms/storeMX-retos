@@ -41,10 +41,10 @@ app.use((req, res) => {
   });
 });
 
-if (process.env.INITIAL_DATA === "development") {
-  console.log("Development environment, creating mocking data...");
-  initializeData();
-}
+// if (process.env.INITIAL_DATA === "development") {
+ // console.log("Development environment, creating mocking data...");
+ // initializeData();
+ //}
 
 app.use(errorHandler);
 

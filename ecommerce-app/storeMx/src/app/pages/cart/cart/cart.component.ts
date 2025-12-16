@@ -7,9 +7,8 @@ import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-cart',
-  standalone: true, 
-  imports: [CommonModule, RouterLink, CurrencyPipe], 
-  
+  standalone: true,
+  imports: [CommonModule, RouterLink, CurrencyPipe],
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.css',
 })
@@ -21,18 +20,16 @@ export class CartComponent implements OnInit {
     this.cart$ = this.cartService.cart$;
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   calculateSubtotal(cart: Cart | null): number {
-    if (!cart || !cart.products) {
-      return 0;
-    }
+    if (!cart || !cart.products) return 0;
+    
     return cart.products.reduce((acc, item) => {
-      if (item.product && typeof item.product.price === 'number') {
-        return acc + item.product.price * item.quantity;
-      }
-      return acc;
+      // Usamos 'any' temporalmente para evitar errores de tipado estricto si el precio viene anidado
+      const product: any = item.product;
+      const price = product.price || 0;
+      return acc + (price * item.quantity);
     }, 0);
   }
 
@@ -42,10 +39,16 @@ export class CartComponent implements OnInit {
 
   updateQuantity(productId: string, newQuantity: number): void {
     if (newQuantity < 1) {
-      this.removeFromCart(productId);
+      this.removeFromCart(productId); // Si baja a 0, lo borramos
       return;
     }
     this.cartService.updateProductQuantity(productId, newQuantity).subscribe();
   }
-}
 
+  // 🛑 NUEVA FUNCIÓN PARA EL BOTÓN "VACIAR"
+  onClearCart(): void {
+    if (confirm('¿Estás seguro de que deseas vaciar todo el carrito?')) {
+      this.cartService.clearCart().subscribe();
+    }
+  }
+}

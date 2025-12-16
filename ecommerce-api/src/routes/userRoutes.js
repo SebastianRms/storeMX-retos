@@ -11,12 +11,14 @@
     deactivateUser,
     toggleUserStatus,
     deleteUser,
-    searchUser
+    searchUser,
+    
     } from '../controllers/userController.js';
     import authMiddleware from '../middlewares/authMiddleware.js'; // Middleware de autenticación
     import isAdmin from '../middlewares/isAdminMiddleware.js'; // Middleware de admin
 
     const router = express.Router();
+
 
     // Validaciones comunes para actualizar perfil
     const profileValidations = [

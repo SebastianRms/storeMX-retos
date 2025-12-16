@@ -1,0 +1,127 @@
+<nav class="bg-gray-900 shadow-xl sticky top-0 z-20 border-b border-indigo-700">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            
+            <div class="flex-shrink-0">
+                <a [routerLink]="['/']" class="text-3xl font-extrabold text-indigo-400 hover:text-indigo-300 transition duration-300">
+                    BayShop
+                </a>
+            </div>
+
+            <div class="hidden md:flex items-center space-x-4">
+                
+               
+
+                <a *ngFor="let route of navRoutes" 
+                   [routerLink]="route.route" 
+                   routerLinkActive="bg-indigo-700 text-white shadow-md"
+                   [routerLinkActiveOptions]="{exact: true}"
+                   class="text-gray-300 hover:bg-gray-800 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition duration-300">
+                    {{ route.title }}
+                </a>
+                
+                <ng-container *ngIf="isLoggedIn$ | async">
+                    <a *ngFor="let route of userRoutes"
+                       [routerLink]="route.route" 
+                       routerLinkActive="bg-indigo-700 text-white shadow-md"
+                       class="text-gray-300 hover:bg-gray-800 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition duration-300">
+                       {{ route.title }}
+                    </a>
+                    
+                    <ng-container *appAdmin>
+                        <a *ngFor="let route of adminRoutes"
+                           [routerLink]="route.route" 
+                           routerLinkActive="bg-red-700 text-white shadow-md"
+                           class="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-sm font-medium transition duration-300">
+                           {{ route.title }}
+                        </a>
+                    </ng-container>
+                </ng-container>
+            </div>
+
+            <div class="hidden md:flex items-center space-x-3">
+                <ng-container *ngIf="isLoggedIn$ | async; else authButtons">
+                    <button (click)="logout()" 
+                            class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition duration-300 shadow-md">
+                        Cerrar Sesión
+                    </button>
+                </ng-container>
+
+                <ng-template #authButtons>
+                    <a routerLink="/login" class="text-gray-300 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition duration-300">
+                        Iniciar Sesión
+                    </a>
+                    <a routerLink="/register" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition duration-300 shadow-md">
+                        Registro
+                    </a>
+                </ng-template>
+            </div>
+
+            <div class="-mr-2 flex md:hidden">
+                <button (click)="toggleMenu()" 
+                        class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
+                    <svg *ngIf="!isMenuOpen" class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+                    <svg *ngIf="isMenuOpen" class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div [class.hidden]="!isMenuOpen" class="md:hidden border-t border-gray-800">
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            
+            <form (ngSubmit)="onSearch(); toggleMenu()" class="mb-4">
+                 <input type="search" [(ngModel)]="searchTerm" name="search" placeholder="Buscar productos..."
+                       class="bg-gray-800 text-white rounded-lg py-2 px-3 w-full text-base focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            </form>
+
+            <a *ngFor="let route of navRoutes" 
+               [routerLink]="route.route" 
+               (click)="toggleMenu()"
+               routerLinkActive="bg-indigo-700 text-white"
+               class="text-gray-300 hover:bg-gray-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition duration-150">
+                {{ route.title }}
+            </a>
+            
+            <ng-container *ngIf="isLoggedIn$ | async">
+                <hr class="border-gray-800 my-2">
+                
+                <ng-container *appAdmin>
+                    <a *ngFor="let route of adminRoutes"
+                       [routerLink]="route.route" 
+                       (click)="toggleMenu()"
+                       routerLinkActive="bg-red-700 text-white"
+                       class="bg-red-500 hover:bg-red-600 text-white block px-3 py-2 rounded-md text-base font-medium transition duration-150">
+                       {{ route.title }} (ADMIN)
+                    </a>
+                    <hr class="border-gray-800 my-2">
+                </ng-container>
+
+                <a *ngFor="let route of userRoutes"
+                   [routerLink]="route.route" 
+                   (click)="toggleMenu()"
+                   routerLinkActive="bg-indigo-700 text-white"
+                   class="text-gray-300 hover:bg-gray-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition duration-150">
+                   {{ route.title }}
+                </a>
+                
+                <button (click)="logout(); toggleMenu()"
+                        class="mt-2 w-full text-left bg-red-600 hover:bg-red-500 text-white block px-3 py-2 rounded-md text-base font-medium transition duration-300">
+                    Cerrar Sesión
+                </button>
+            </ng-container>
+
+            <ng-template #authButtons>
+                <hr class="border-gray-800 my-2">
+                <a routerLink="/login" (click)="toggleMenu()"
+                   class="text-gray-300 hover:bg-gray-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                    Iniciar Sesión
+                </a>
+                <a routerLink="/register" (click)="toggleMenu()"
+                   class="mt-1 w-full text-left bg-indigo-600 hover:bg-indigo-500 text-white block px-3 py-2 rounded-md text-base font-medium transition duration-300">
+                    Registro
+                </a>
+            </ng-template>
+        </div>
+    </div>
+</nav>

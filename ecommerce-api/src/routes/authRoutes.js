@@ -1,5 +1,5 @@
 import express from "express";
-import { body } from "express-validator";
+import { body, query } from "express-validator";
 import validate from "../middlewares/validation.js";
 import { register, login, checkEmail} from "../controllers/authController.js";
 
@@ -45,7 +45,7 @@ router.post(
       .isIn(["admin", "customer", "guest"])
       .withMessage("Role must be admin, customer, or guest"),
 
-    body("avatar").optional().isURL().withMessage("Avatar must be a valid URL"),
+    body("avatar").optional({ checkFalsy: true }).isURL().withMessage("Avatar must be a valid URL"),
   ],
   validate,
   register
@@ -67,18 +67,6 @@ router.post(
   login
 );
 
-router.post(
-  "/check-email",
-  [
-    body("email")
-      .notEmpty()
-      .withMessage("email is required")
-      .isEmail()
-      .withMessage("Valid email is required")
-      .normalizeEmail(),
-  ],
-  validate,
-  checkEmail // <--- Conecta al controlador
-);
+router.get('/check-email', checkEmail);;
 
 export default router;

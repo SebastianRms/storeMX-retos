@@ -1,0 +1,61 @@
+<div class="container mt-4">
+    <h2>🚚 Opciones de Pago y Envío</h2>
+    <hr>
+    
+    <div class="card p-3 mb-4 shadow-sm">
+        <h4 class="card-title">Selección de Envío</h4>
+        
+        <div *ngFor="let option of shippingOptions" class="form-check mb-2">
+            <input 
+                class="form-check-input" 
+                type="radio" 
+                name="shippingOption" 
+                [id]="'ship-' + option.id" 
+                [value]="option.cost"
+                (change)="onShippingSelected(option.cost)">
+            
+            <label class="form-check-label" [for]="'ship-' + option.id">
+                {{ option.name }} ({{ option.estimatedDays }} días) - 
+                <span class="fw-bold">{{ option.cost | currency }}</span>
+            </label>
+        </div>
+        <small class="text-muted">Costo del Carrito Base: {{ cartTotal | currency }}</small>
+    </div>
+
+    <div class="card p-4 mb-4 shadow-lg">
+        <h4 class="card-title">Detalles de Pago (Simulación)</h4>
+        
+        <form>
+            <div class="mb-3">
+                <label for="cardNumber" class="form-label">Número de Tarjeta</label>
+                <input type="text" class="form-control" id="cardNumber" [(ngModel)]="paymentDetails.cardNumber" name="cardNumber" required>
+            </div>
+            <div class="mb-3 row">
+                <div class="col-md-6">
+                    <label for="cardName" class="form-label">Nombre del Titular</label>
+                    <input type="text" class="form-control" id="cardName" [(ngModel)]="paymentDetails.cardName" name="cardName" required>
+                </div>
+                <div class="col-md-3">
+                    <label for="expiryDate" class="form-label">Fecha Exp.</label>
+                    <input type="text" class="form-control" id="expiryDate" [(ngModel)]="paymentDetails.expiryDate" name="expiryDate" required>
+                </div>
+                <div class="col-md-3">
+                    <label for="cvv" class="form-label">CVV</label>
+                    <input type="text" class="form-control" id="cvv" [(ngModel)]="paymentDetails.cvv" name="cvv" required>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="card p-3 bg-light d-flex justify-content-between align-items-center">
+        <div class="h4 m-0">
+            TOTAL FINAL: 
+            <span class="fw-bolder text-primary">{{ finalTotal | currency }}</span>
+        </div>
+        <button 
+            class="btn btn-success btn-lg" 
+            (click)="processOrder()">
+            💸 Finalizar y Pagar
+        </button>
+    </div>
+</div>

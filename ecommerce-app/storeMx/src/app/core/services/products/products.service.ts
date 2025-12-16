@@ -27,7 +27,7 @@ export class ProductsService {
   }
 
   getProductByID(id:string):Observable<Product>{
-    const url = `${this.baseUrl}/${id}}`
+    const url = `${this.baseUrl}/${id}`
     return this.httpClient.get<Product>(`${this.baseUrl}/${id}`);
   }
 

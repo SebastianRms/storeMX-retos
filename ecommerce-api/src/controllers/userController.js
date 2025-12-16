@@ -1,31 +1,49 @@
 import bcrypt from "bcrypt";
-import User from "../models/users.js";
+import User from "../models/users.js"
+import PaymentMethod from "../models/paymentMethods.js"; 
+import ShippingAddress from "../models/shippingAddress.js"; // Asegúrate que el archivo se llame así (mayúscula/minúscula)
 
-// Obtener perfil del usuario autenticado
+// Obtener perfil del usuario autenticado (CON DATOS COMPLETOS)
 const getUserProfile = async (req, res, next) => {
   try {
-    const userId = req.user.userId; // Asumiendo que tienes middleware de autenticación
+    const userId = req.user.userId;
 
+    // 1. Buscamos al usuario base
     const user = await User.findById(userId).select("-hashPassword");
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
+    // 2. Buscamos sus direcciones usando el modelo ShippingAddress
+    const addresses = await ShippingAddress.find({ user: userId });
+
+    // 3. Buscamos sus métodos de pago usando el modelo PaymentMethod
+    // Filtramos solo los activos (isActive: true) por buena práctica, aunque opcional
+    const paymentMethods = await PaymentMethod.find({ user: userId, isActive: true });
+
+    // 4. Combinamos todo en un objeto
+    const userWithDetails = user.toObject();
+    
+    // Inyectamos las listas
+    userWithDetails.shippingAddresses = addresses;
+    userWithDetails.paymentMethods = paymentMethods;
+
+    // 5. Enviamos la respuesta completa
     res.status(200).json({
       message: "User profile retrieved successfully",
-      user,
+      user: userWithDetails, 
     });
   } catch (error) {
     next(error);
   }
 };
-// Obtener todos los usuarios (solo admin)
+
+// ... RESTO DEL ARCHIVO (Tus funciones originales se mantienen igual) ...
+
 const getAllUsers = async (req, res, next) => {
   try {
     const { page = 1, limit = 10, role, isActive } = req.query;
-
-    // Construir filtro
     const filter = {};
     if (role) filter.role = role;
     if (isActive !== undefined) filter.isActive = isActive === "true";
@@ -50,201 +68,120 @@ const getAllUsers = async (req, res, next) => {
   }
 };
 
-// Obtener usuario por ID (solo admin)
 const getUserById = async (req, res, next) => {
   try {
     const { userId } = req.params;
-
     const user = await User.findById(userId).select("-hashPassword");
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    res.status(200).json({
-      message: "User retrieved successfully",
-      user,
-    });
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.status(200).json({ message: "User retrieved successfully", user });
   } catch (error) {
     next(error);
   }
 };
 
-// Actualizar perfil del usuario
 const updateUserProfile = async (req, res, next) => {
   try {
     const userId = req.user.userId;
     const { displayName, email, phone, avatar } = req.body;
-
-    // Verificar si el email ya existe (si se está cambiando)
     const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    if (!user) return res.status(404).json({ message: "User not found" });
 
     if (email && email !== user.email) {
       const emailExists = await User.findOne({ email, _id: { $ne: userId } });
-      if (emailExists) {
-        return res.status(400).json({ message: "Email already in use" });
-      }
+      if (emailExists) return res.status(400).json({ message: "Email already in use" });
     }
-
-    // Actualizar campos
     if (displayName) user.displayName = displayName;
     if (email) user.email = email;
     if (phone) user.phone = phone;
     if (avatar) user.avatar = avatar;
-
     await user.save();
-
-    // Devolver usuario sin password
     const updatedUser = await User.findById(userId).select("-hashPassword");
-
-    res.status(200).json({
-      message: "Profile updated successfully",
-      user: updatedUser,
-    });
+    res.status(200).json({ message: "Profile updated successfully", user: updatedUser });
   } catch (error) {
     next(error);
   }
 };
 
-// Cambiar contraseña
 const changePassword = async (req, res, next) => {
   try {
     const userId = req.user.userId;
     const { currentPassword, newPassword } = req.body;
-
     const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Verificar contraseña actual
     const isMatch = await bcrypt.compare(currentPassword, user.hashPassword);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Current password is incorrect" });
-    }
+    if (!isMatch) return res.status(400).json({ message: "Current password is incorrect" });
 
-    // Hash nueva contraseña
     const saltRounds = 10;
     const hashedNewPassword = await bcrypt.hash(newPassword, saltRounds);
-
     user.hashPassword = hashedNewPassword;
     await user.save();
-
-    res.status(200).json({
-      message: "Password changed successfully",
-    });
+    res.status(200).json({ message: "Password changed successfully" });
   } catch (error) {
     next(error);
   }
 };
 
-// Actualizar usuario (solo admin)
 const updateUser = async (req, res, next) => {
   try {
     const { userId } = req.params;
     const { displayName, email, phone, avatar, role, isActive } = req.body;
-
     const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Verificar si el email ya existe (si se está cambiando)
     if (email && email !== user.email) {
       const emailExists = await User.findOne({ email, _id: { $ne: userId } });
-      if (emailExists) {
-        return res.status(400).json({ message: "Email already in use" });
-      }
+      if (emailExists) return res.status(400).json({ message: "Email already in use" });
     }
-
-    // Actualizar campos
     if (displayName) user.displayName = displayName;
     if (email) user.email = email;
     if (phone) user.phone = phone;
     if (avatar) user.avatar = avatar;
     if (role) user.role = role;
     if (isActive !== undefined) user.isActive = isActive;
-
     await user.save();
-
     const updatedUser = await User.findById(userId).select("-hashPassword");
-
-    res.status(200).json({
-      message: "User updated successfully",
-      user: updatedUser,
-    });
+    res.status(200).json({ message: "User updated successfully", user: updatedUser });
   } catch (error) {
     next(error);
   }
 };
 
-// Desactivar usuario
 const deactivateUser = async (req, res, next) => {
   try {
     const userId = req.user.userId;
-
     const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
+    if (!user) return res.status(404).json({ message: "User not found" });
     user.isActive = false;
     await user.save();
-
-    res.status(200).json({
-      message: "Account deactivated successfully",
-    });
+    res.status(200).json({ message: "Account deactivated successfully" });
   } catch (error) {
     next(error);
   }
 };
 
-// Activar/Desactivar usuario (solo admin)
 const toggleUserStatus = async (req, res, next) => {
   try {
     const { userId } = req.params;
-
     const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
+    if (!user) return res.status(404).json({ message: "User not found" });
     user.isActive = !user.isActive;
     await user.save();
-
     const updatedUser = await User.findById(userId).select("-hashPassword");
-
-    res.status(200).json({
-      message: `User ${
-        user.isActive ? "activated" : "deactivated"
-      } successfully`,
-      user: updatedUser,
-    });
+    res.status(200).json({ message: `User ${user.isActive ? "activated" : "deactivated"} successfully`, user: updatedUser });
   } catch (error) {
     next(error);
   }
 };
 
-// Eliminar cuenta (soft delete)
 const deleteUser = async (req, res, next) => {
   try {
     const { userId } = req.params;
-
     const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    // Soft delete - solo desactivar
+    if (!user) return res.status(404).json({ message: "User not found" });
     user.isActive = false;
     await user.save();
-
-    res.status(200).json({
-      message: "User deleted successfully",
-    });
+    res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
     next(error);
   }
@@ -252,44 +189,15 @@ const deleteUser = async (req, res, next) => {
 
 const searchUser = async (req, res, next) => {
   try {
-    const {
-      q,
-      displayName,
-      email,
-      phone,
-      role,
-      isActive,
-      sort,
-      order,
-      page = 1,
-      limit = 10,
-    } = req.query;
-    //http://localhost:3000/api/users/search?q=santiago;
+    const { q, displayName, email, phone, role, isActive, sort, order, page = 1, limit = 10 } = req.query;
     let filters = {};
-
-    if (displayName) {
-      filters.displayName = { $regex: displayName, $options: "i" };
-    }
-    if (q) {
-      filters.$or = [
-        { displayName: { $regex: q, $options: "i" } },
-        { phone: { $regex: q, $options: "i" } },
-        { email: { $regex: q, $options: "i" } },
-      ];
-    }
-
-    //http://localhost:3000/api/users/search?sort=email;
-    if (role) {
-      filters.role = role;
-    }
-    if (isActive === "true") {
-      filters.isActive = true;
-    } else if (isActive === "false") {
-      filters.isActive = false;
-    }
+    if (displayName) filters.displayName = { $regex: displayName, $options: "i" };
+    if (q) filters.$or = [{ displayName: { $regex: q, $options: "i" } }, { phone: { $regex: q, $options: "i" } }, { email: { $regex: q, $options: "i" } }];
+    if (role) filters.role = role;
+    if (isActive === "true") filters.isActive = true;
+    else if (isActive === "false") filters.isActive = false;
 
     let sortOptions = {};
-
     if (sort) {
       const sortOrder = order === "desc" ? -1 : 1;
       sortOptions[sort] = sortOrder;
@@ -298,34 +206,28 @@ const searchUser = async (req, res, next) => {
     }
 
     const skip = (parseInt(page) - 1) * parseInt(limit);
-
-    const users = await User.find(filters)
-      .sort(sortOptions)
-      .skip(skip)
-      .limit(parseInt(limit));
-
-    const totalResul = await User.find(filters);
+    const users = await User.find(filters).sort(sortOptions).skip(skip).limit(parseInt(limit));
+    const totalResul = await User.countDocuments(filters);
     const totalPages = Math.ceil(totalResul / parseInt(limit));
 
     res.status(200).json({
       users,
-      Pagination:{
-        currentPage: parseInt(page),
-        totalPages,
-        totalResul,
-        hasNext: parseInt(page) < totalPages,
-        hasPrev: parseInt(page) > 1
-      },
-      filters:{
-        searchTearm: q || null,
-        role: role || null,
-        isActive: isActive === 'true' ? true : false,
-        order: order || 'email'
-      }
+      Pagination: { currentPage: parseInt(page), totalPages, totalResul, hasNext: parseInt(page) < totalPages, hasPrev: parseInt(page) > 1 },
+      filters: { searchTearm: q || null, role: role || null, isActive: isActive === 'true' ? true : false, order: order || 'email' }
     });
-
   } catch (error) {
     console.log(error);
+    next(error);
+  }
+};
+
+const checkEmail = async (req, res, next) => {
+  try {
+    const { email } = req.query;
+    if (!email) return res.status(400).json({ message: "Email is required" });
+    const user = await User.findOne({ email });
+    res.status(200).json({ exists: !!user });
+  } catch (error) {
     next(error);
   }
 };
@@ -340,5 +242,6 @@ export {
   deactivateUser,
   toggleUserStatus,
   deleteUser,
-  searchUser
+  searchUser,
+  checkEmail
 };

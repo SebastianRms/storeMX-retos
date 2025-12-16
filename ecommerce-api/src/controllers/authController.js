@@ -63,7 +63,9 @@ async function login(req, res, next) {
 async function checkEmail(req, res, next) {
   try {
     const email = req.query.email;
+    
     const userExist = await checkUserExist(email);
+    console.log(userExist)
     // !!userExist convierte el objeto (o null) en un booleano (true/false)
     res.status(200).json({ exists: !!userExist });
   } catch (error) {
