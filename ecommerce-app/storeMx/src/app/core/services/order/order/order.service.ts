@@ -1,12 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, of } from 'rxjs';
+// 👇 1. IMPORTANTE: Importar el environment (ajusta la ruta si te marca error en rojo)
+import { environment } from '../../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrderService {
-  private apiUrl = 'http://localhost:3000/api/orders'; // Endpoint base de tus órdenes
+  // 👇 2. CAMBIO CLAVE: Usamos la variable del environment + '/orders'
+  // Esto hará que en tu casa use localhost y en la nube use Render automáticamente.
+  private apiUrl = `${environment.apiUrl}/orders`; 
 
   constructor(private http: HttpClient) { }
 
@@ -16,12 +20,11 @@ export class OrderService {
    * @param userId (Opcional, pero se recomienda que el Back-end lo tome del token)
    */
   getOrdersByUserId(): Observable<any[]> {
-    // 🛑 Endpoint asumido: Tu Back-end DEBE tener un endpoint como este 🛑
     // La lógica de saber qué ID buscar la maneja tu Back-end leyendo el JWT.
+    // Nota: Como apiUrl ya incluye '/orders', aquí solo agregamos '/user'
     return this.http.get<any[]>(`${this.apiUrl}/user`).pipe(
       catchError((error) => {
         console.error('Error al cargar historial de órdenes:', error);
-        // Aquí iría tu ToastService para notificar al usuario (Paso A2)
         return of([]); // Devuelve un array vacío en caso de error
       })
     );
