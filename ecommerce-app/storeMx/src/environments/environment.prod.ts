@@ -1,4 +1,4 @@
 export const environment = {
-    production: true,
-    apiBase: 'https://storemx-retos-api.onrender.com/api'
-}
+  production: true,
+  apiUrl: 'https://storemx-retos-api.onrender.com/api' 
+};
