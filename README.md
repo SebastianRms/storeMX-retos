@@ -21,7 +21,7 @@ Arquitectura: Estructura basada en Middlewares para crear barreras de seguridad 
 
 Robustez: Sistema de manejo de errores diferenciado para entornos de Desarrollo y Producción.
 
-🛠️ Funcionalidades Clave
+Funcionalidades Clave
 Operación de Almacén: Lógica diseñada para el control de movimientos de stock y ventas en tiempo real.
 
 Escalabilidad: Código modular preparado para el crecimiento de la operación y volumen de datos.
