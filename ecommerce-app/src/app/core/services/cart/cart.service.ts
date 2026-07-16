@@ -12,7 +12,7 @@ import {
 import { Cart } from '../../types/Cart';
 import { AuthService } from '../auth/auth.service';
 import { ToastService } from '../toast/toast.service';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
