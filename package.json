@@ -1,0 +1,15 @@
+{
+  "name": "storemx-workspace",
+  "version": "1.0.0",
+  "description": "StoreMX - Workspace root to run both client and server concurrently",
+  "main": "index.js",
+  "scripts": {
+    "install:all": "pnpm install && cd ecommerce-app && pnpm install && cd ../ecommerce-api && pnpm install",
+    "client": "cd ecommerce-app && ng serve -o",
+    "server": "cd ecommerce-api && pnpm run dev",
+    "dev": "concurrently \"pnpm run client\" \"pnpm run server\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

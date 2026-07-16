@@ -1,19 +1,19 @@
-import mongoose from "mongoose"; // Importa la librería mongoose para interactuar con MongoDB
-import dotenv from 'dotenv'; // Importa dotenv para manejar variables de entorno
+import mongoose from "mongoose";
+import dotenv from 'dotenv'; 
 
-dotenv.config(); // Carga las variables de entorno desde un archivo .env
+dotenv.config();
 
-const dbConection = async ()=> { // Declara una función asíncrona para conectar a la base de datos
+const dbConection = async ()=> {
     try{
-        const dbURI = process.env.MONGODB_URI; // Obtiene la URI de MongoDB desde las variables de entorno
-        const dbNAME = process.env.MONGODB_DB; // Obtiene el nombre de la base de datos desde las variables de entorno
+        const dbURI = process.env.MONGODB_URI;
+        const dbNAME = process.env.MONGODB_DB;
 
-        await mongoose.connect(`${dbURI}/${dbNAME}`, {}); // Conecta a MongoDB usando la URI y el nombre de la base de datos
-        console.log(`MongoDB is connected`) // Muestra un mensaje si la conexión fue exitosa
+        await mongoose.connect(`${dbURI}/${dbNAME}`, {}); 
+        console.log(`MongoDB is connected`)
     }catch (error){
-        console.log(error); // Muestra el error en consola si la conexión falla
-        process.exit(1); // Finaliza el proceso con un código de error
+        console.log(error); 
+        process.exit(1);
     }
 };
 
-export default dbConection // Exporta la función para usarla en otros   
+export default dbConection 

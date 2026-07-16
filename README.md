@@ -29,9 +29,27 @@ Antes de comenzar, asegúrate de tener instalado lo siguiente en tu laptop:
 
 ## 🔌 Guía de Inicio Rápido
 
-Sigue estos pasos en orden para levantar todo el proyecto localmente.
+### Opción 1: Iniciar Todo al Mismo Tiempo (Recomendado 🚀)
 
-### 1. Levantar el Backend (API)
+Puedes instalar y levantar ambos proyectos (frontend y backend) con comandos sencillos desde la raíz del proyecto usando `concurrently`:
+
+1.  **Instalar todas las dependencias (raíz, backend y frontend):**
+    ```powershell
+    pnpm run install:all
+    ```
+2.  **Levantar cliente y servidor al mismo tiempo:**
+    ```powershell
+    pnpm run dev
+    ```
+    Esto levantará la aplicación Angular en [http://localhost:4200](http://localhost:4200) y el servidor backend en [http://localhost:3000](http://localhost:3000) de manera simultánea en una sola terminal con prefijos de color para cada log.
+
+---
+
+### Opción 2: Levantar por Separado (Manual)
+
+Si prefieres correrlos en terminales independientes para ver sus respectivos logs por separado:
+
+#### 1. Levantar el Backend (API)
 
 El backend gestiona la base de datos, autenticación con JWT y control de inventarios.
 
@@ -57,23 +75,21 @@ El backend gestiona la base de datos, autenticación con JWT y control de invent
     
     > 💡 **Sembrado de Datos Automático:** La primera vez que el servidor se conecte a la base de datos, si detecta que las colecciones están vacías, sembrará automáticamente usuarios de prueba, categorías y productos gracias al módulo `initializeData()`.
 
----
-
-### 2. Levantar el Frontend (Angular)
+#### 2. Levantar el Frontend (Angular)
 
 El frontend contiene la interfaz de usuario para navegar por la tienda, gestionar el carrito y realizar el checkout.
 
-1.  **Abre una nueva terminal** (sin cerrar la de la API) y navega a la carpeta del frontend:
+1.  **Abre una nueva terminal** y navega a la carpeta del frontend:
     ```powershell
     cd ecommerce-app
     ```
 2.  **Instalar dependencias:**
     ```powershell
-    npm install
+    pnpm install
     ```
 3.  **Iniciar la aplicación Angular:**
     ```powershell
-    npm start
+    pnpm start
     ```
     La aplicación se compilará y estará disponible en [http://localhost:4200](http://localhost:4200).
 
