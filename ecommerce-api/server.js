@@ -13,7 +13,7 @@ dotenv.config();
 setupGlobalErrorHandlers();
 
 const app = express();
-dbConnection();
+await dbConnection();
 console.log("CORS ORIGIN:", process.env.FRONT_APP_URL);
 app.use(
   cors({
